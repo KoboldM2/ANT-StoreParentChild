@@ -8,6 +8,7 @@ export class App extends Component {
     constructor(props) {
 		super(props)
         this.state = {
+			itemIsActive: false,
 			items: [],
 			userInput: {
 				itemFile: null,
@@ -17,11 +18,11 @@ export class App extends Component {
 			},
 			totalQty: 0,
 			totalPrice: 0,
-
 		}		
 		this.childQuantityHandler = this.childQuantityHandler.bind(this)
 		this.childPriceHandler = this.childPriceHandler.bind(this)
 	}
+
 //#region - Order Handlers
 	fileHandler = event => {
 		var userInput = {...this.state.userInput}
@@ -58,6 +59,7 @@ export class App extends Component {
 	}
 
 //#endregion
+
 	submitOrder() {
 		const userInputObject = this.state.userInput
 		this.setState({
@@ -113,24 +115,24 @@ export class App extends Component {
 						</button>
 					</form>
 				</div>
-
-				<div>
-				{/*{this.state.items.length > 0 &&
-
-				} */}		
+				
 					<ItemComponent
 						items = {this.state.items}
-						parentTotalQty = {this.state.totalQty}
-						parentTotalPrice = {this.state.totalPrice}
+						itemIsActive = {this.state.itemIsActive}
 						qtyChildHandler = {this.childQuantityHandler.bind(this)}
 						priceChildHandler = {this.childPriceHandler.bind(this)}
 					/>
-				</div>
-
+				
 				<br/>
+
 				<div>
-					Total Quantity: {this.state.totalQty}
-					Total Price: {this.state.totalPrice}
+					<div>
+						Total Quantity: {this.state.totalQty}
+					</div>
+
+					<div>
+						Total Price: {this.state.totalPrice}
+					</div>
 				</div>
 
             </div>

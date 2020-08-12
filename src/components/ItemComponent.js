@@ -1,100 +1,108 @@
 import React, {Component} from 'react'
 import InputComponent from './InputComponent'
 
+import './itemCompcss.css'
+
 export class ItemComponent extends Component {  
     constructor(props) {
         super(props)
         this.state = {
-            currentTotalPrice: 0,
-            currentTotalQty: 0,
+            itemComponentActive: this.props.itemIsActive,
             itemQuantity: 0,
             itemPrice: 0,
-            itemIsActive: false,
         }
+        this.stateHandlingForQuantity = this.stateHandlingForQuantity.bind(this)
     }
 
-    quantityValueHandler = event => {
-        /* setState that currentTotalQty + itemQuantity maybe then return new state*/
-        
-    }
-
-    priceValueHandler = event => {
-        
-    }
-
+//#region - Collapse Div Functions
     itemShowDetails() {
-        if(this.state.itemIsActive === false) {
+        if(this.state.itemComponentActive === false) {
             this.setState({
-                itemIsActive: true
+                itemComponentActive: true
             })
         }
     }
-
+    
     itemCollapseBack() {
         this.setState({
-            itemIsActive: false
+            itemComponentActive: false
+        })
+    }
+//#endregion
+
+    stateHandlingForQuantity(value){
+        this.setState({
+            itemQuantity: value
         })
     }
 
-    removeItem() {
-        
+    stateHandlingForPrice(value){
+        this.setState({
+            itemPrice: value
+        })
     }
 
     render() {
+        const activeCheck = this.state.itemComponentActive
         const itemsArray = this.props.items
-        const activeCheck = this.state.itemIsActive
-        const itemsArrayToMap = itemsArray.map((item, index) => 
-            <div key = {item.itemName} onClick={this.itemShowDetails.bind(this)} onChange={this.itemStateHandler.bind(this)}>
-                <img src = {item.itemFile} alt ="alt img" height="100px" width="100px"/>
-
-                Name: {item.itemName}
-
-                Quantity: {item.itemQty}
-
-                Price: {item.itemPrice}
-
-                {/* inline ifelse: if true: do this, else:  */}
-                { activeCheck ? (
+        const itemsArrayToMap = itemsArray.map((item, index) =>
+            <div 
+            key = {item.itemName}
+            >
+                <div 
+                onClick = {this.itemShowDetails.bind(this)} 
+                className="individualItem"
+                >
                     <div>
-                        <div>
-                            Change Quantity: 
-                                <InputComponent
-                                    name = 'orderQty'
-                                    inputType = 'number'
-                                    placeholder = 'Qty'
-                                    inputMin = '1'
-                                    inputMax = '99'
-                                    onChange = {this.quantityValueHandler}
-                                    value = {this.state.itemQuantity}
-                                />
-                        </div>
+                        <img src = {item.itemFile} alt ="alt img" height="100px" width="100px"/>
+                    </div>
+                    
+                    <div>
+                        Name: {item.itemName}
+                    </div>
 
-                        <div>
-                            Change Price: 
+                    <div>
+                        Quantity: 
                             <InputComponent
                                 name = 'orderQty'
                                 inputType = 'number'
                                 placeholder = 'Qty'
                                 inputMin = '1'
                                 inputMax = '99'
-                                onChange = {this.priceValueHandler}
-                                value = {this.state.itemPrice}
+                                value = {this.state.itemQuantity}
+                                onChange = {e => this.stateHandlingForQuantity(e.target.value)}
                             />
-                        </div>
-                        
-                        <div onClick = {this.childRemoveItem}>
-                            {/* delete item */}
-                            <u style={{color: "blue"}}>delete</u>
-                        </div>
-
-                        <div onClick={this.itemCollapseBack.bind(this)}>
-                            <u style={{color: "blue"}}>close</u>
-                        </div>
                     </div>
-                    ) : (
-                        ''
-                    )
-                }
+
+                    <div>
+                        Price: 
+                        <InputComponent
+                            name = 'orderPrice'
+                            inputType = 'number'
+                            placeholder = 'Price'
+                            inputMin = '0'
+                            inputMax = '999999'
+                            value = {this.state.itemPrice}
+                            onChange = {e => this.stateHandlingForPrice(e.target.value)}
+                        />
+                    </div>
+
+                    {/* inline ifelse: if true: do this, else:  */}
+                    { activeCheck ? (
+                        <div>
+                            <div>
+                                <u style={{color: "blue"}}>delete</u>
+                            </div>
+
+                            <div onClick={this.itemCollapseBack.bind(this)}>
+                                <u style={{color: "blue"}}>close</u>
+                            </div>
+                        </div>
+                        ) : (
+                            ''
+                        )
+                    }
+                </div>
             </div>
         )
 

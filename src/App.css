@@ -1,0 +1,18 @@
+.mainDiv {
+    display: flex;
+}
+
+.addItemDiv {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    background-color: lightpink;
+    align-items: center;
+}
+
+.subAddItemDiv {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: center;
+}
