@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import InputComponent from './components/InputComponent'
-//import ItemComponent from './components/ItemComponent'
+import ItemComponent from './components/ItemComponent'
 
 export class Appcopy extends Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export class Appcopy extends Component {
         }
         this.decrementQuantity = this.decrementQuantity.bind(this)
         this.incrementQuantity = this.incrementQuantity.bind(this)
-        this.quantityIncDecHandler = this.quantityIncDecHandler.bind(this)
+        this.quantityInputHandler = this.quantityInputHandler.bind(this)
         this.addItemFunction = this.addItemFunction.bind(this)
     }
 
@@ -49,19 +49,21 @@ export class Appcopy extends Component {
           });
     }
 
-    quantityIncDecHandler = event => {
+    quantityInputHandler = (event, name) => {
+        parseInt(event.target.value)
+        var userInput = {...this.state.userInput}
+        userInput.itemQty = event.target.value
         this.setState({
-            baseQuantity: event.target.value
+            [name]: event.target.value,
+            userInput
         });
-        console.log(event.target.value)
     }
 
 //#endregion
 
 //#region - Add Item Value Handlers
-
-
-/*     fileHandler = event => {
+    //Quantity Add Item Handler is in quantityInputHandler
+    fileHandler = event => {
         var userInput = {...this.state.userInput}
         userInput.itemFile = URL.createObjectURL(event.target.files[0])
         this.setState({userInput})
@@ -73,24 +75,17 @@ export class Appcopy extends Component {
         this.setState({userInput})
     }
 
-    quantityHandler = event => {
-        var userInput = {...this.state.userInput}
-        userInput.itemQty = parseInt(event.target.value)
-        this.setState({userInput})
-    }
-
     priceHandler = event => {
         var userInput = {...this.state.userInput}
         userInput.itemPrice = parseInt(event.target.value)
         this.setState({userInput})
-    } */
+    }
 
     addItemFunction = () => {
         var allInputs = this.state.userInput
         this.setState({
             addedItem: this.state.addedItem.concat(allInputs)
         })
-        console.log(this.state.addedItem)
     }
 
 //#endregion
@@ -104,14 +99,14 @@ export class Appcopy extends Component {
                         inputType = 'file'
                         placeholder = 'Upload Image'
                         accept = 'image/*'
-                        //onChange = {this.fileHandler.bind(this)}
+                        onChange = {this.fileHandler.bind(this)}
                     />
 
                     <InputComponent
                         name = 'itemName'
                         inputType = 'text'
                         placeholder = 'Item Name'
-                        //onChange = {this.nameHandler.bind(this)}
+                        onChange = {this.nameHandler.bind(this)}
                     />
 
                     <div className = "subAddItemDiv">
@@ -120,7 +115,7 @@ export class Appcopy extends Component {
                             name = 'itemQty'
                             inputType = 'number'
                             placeholder = 'Qty'
-                            onChange = {this.quantityIncDecHandler}
+                            onChange = {(event) => this.quantityInputHandler(event, 'baseQuantity')}
                             value = {this.state.baseQuantity}
                         />
                         <button onClick={this.incrementQuantity}>+</button>
@@ -130,7 +125,7 @@ export class Appcopy extends Component {
                         name = 'itemPrice'
                         inputType = 'number'
                         placeholder = 'Item Price'
-                        //onChange = {this.priceHandler.bind(this)}
+                        onChange = {this.priceHandler.bind(this)}
                     />
 
                     <button
@@ -139,12 +134,21 @@ export class Appcopy extends Component {
                 </div>
 
                 <div>
-                    {/* <ItemComponent/> */}
+                    <ItemComponent
+                        items = {this.state.addedItem}
+                    />       
                 </div>
 
-                <div>
-                    total qty:
-                    total price:
+                <div className = "totalCountersDiv">
+
+                    <div className = "totalSubDiv">
+                        total qty: lorem
+                    </div>
+                
+                    <div className = "totalSubDiv">
+                        total price: ipsum
+                    </div>
+
                 </div>
             </div>
         )

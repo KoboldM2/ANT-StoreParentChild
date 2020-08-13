@@ -7,108 +7,102 @@ export class ItemComponent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            itemComponentActive: this.props.itemIsActive,
-            itemQuantity: 0,
-            itemPrice: 0,
+            acceptedFile: null,
+            acceptedName: '',
+            acceptedQuantity: 0,
+            acceptedPrice: 0,
+            itemsStateHolder: []
         }
-        this.stateHandlingForQuantity = this.stateHandlingForQuantity.bind(this)
+
+        this.testFunction = this.testFunction.bind(this)
+        this.deleteItem = this.deleteItem.bind(this)
+        this.arrayStateHandler = this.arrayStateHandler.bind(this)
+        this.updateQuantityHandler = this.updateQuantityHandler.bind(this)
+        this.updatePriceHandler = this.updatePriceHandler.bind(this)
     }
 
-//#region - Collapse Div Functions
-    itemShowDetails() {
-        if(this.state.itemComponentActive === false) {
-            this.setState({
-                itemComponentActive: true
-            })
-        }
-    }
-    
-    itemCollapseBack() {
+    arrayStateHandler = (item) => {
+        var tempVar = item
         this.setState({
-            itemComponentActive: false
+            itemsStateHolder: tempVar
         })
-    }
-//#endregion
-
-    stateHandlingForQuantity(value){
-        this.setState({
-            itemQuantity: value
-        })
+        //console.log(acceptedItemArray[index])
     }
 
-    stateHandlingForPrice(value){
-        this.setState({
-            itemPrice: value
-        })
+    updateQuantityHandler = (event, item) => {
+        parseInt(event.target.value)
+        parseInt(item.itemQty)
+        item.itemQty = event.target.value
+    }
+
+    updatePriceHandler = (event, item) => {
+        parseInt(event.target.value)
+        parseInt(item.itemPrice)
+        item.itemPrice = event.target.value
+    }
+
+    deleteItem = (acceptedItemArray,index) => {
+        acceptedItemArray.splice(index)
+        console.log(acceptedItemArray)
+    }
+
+    testFunction = item => {
+        /* console.log("this is passed qty: " + item.itemQty)
+        item.itemQty = item.itemQty + 1000
+        console.log("this is the new qty: " + item.itemQty) 
+        this works!!! itemqty does change
+        */
     }
 
     render() {
-        const activeCheck = this.state.itemComponentActive
-        const itemsArray = this.props.items
-        const itemsArrayToMap = itemsArray.map((item, index) =>
-            <div 
-            key = {item.itemName}
+        var acceptedItemArray = this.props.items
+        const mappedItems = acceptedItemArray.map((item, index) =>
+            <div key = {index} 
+            className = "individualItem" 
+            onChange={() => this.arrayStateHandler(item)}
             >
-                <div 
-                onClick = {this.itemShowDetails.bind(this)} 
-                className="individualItem"
+                <div className = "subItemElements">
+                    <img src = {item.itemFile} alt="alt" height="100px" width="100px"/>
+                </div>
+
+                <div className = "subItemElements">
+                    Name: {item.itemName}
+                </div>
+
+                <div className = "subItemElements">
+                    Quantity:
+                    {/* {item.itemQty} */}
+                    <InputComponent
+                        name = 'itemQty'
+                        inputType = 'number'
+                        placeholder = 'Qty'
+                        value = {item.itemQty}
+                        onChange = {(event) => this.updateQuantityHandler(event, item)}
+                    />
+                </div>
+
+                <div className = "subItemElements">
+                    Price: 
+                    <InputComponent
+                        name = 'itemPrice'
+                        inputType = 'number'
+                        placeholder = 'Price'
+                        value = {item.itemPrice}
+                        onChange = {(event) => this.updatePriceHandler(event, item)}
+                    />
+                </div>
+
+                <div className = "subItemElements" 
+                onClick = {() => this.deleteItem(acceptedItemArray,index)}
                 >
-                    <div>
-                        <img src = {item.itemFile} alt ="alt img" height="100px" width="100px"/>
-                    </div>
-                    
-                    <div>
-                        Name: {item.itemName}
-                    </div>
-
-                    <div>
-                        Quantity: 
-                            <InputComponent
-                                name = 'orderQty'
-                                inputType = 'number'
-                                placeholder = 'Qty'
-                                inputMin = '1'
-                                inputMax = '99'
-                                value = {this.state.itemQuantity}
-                                onChange = {e => this.stateHandlingForQuantity(e.target.value)}
-                            />
-                    </div>
-
-                    <div>
-                        Price: 
-                        <InputComponent
-                            name = 'orderPrice'
-                            inputType = 'number'
-                            placeholder = 'Price'
-                            inputMin = '0'
-                            inputMax = '999999'
-                            value = {this.state.itemPrice}
-                            onChange = {e => this.stateHandlingForPrice(e.target.value)}
-                        />
-                    </div>
-
-                    {/* inline ifelse: if true: do this, else:  */}
-                    { activeCheck ? (
-                        <div>
-                            <div>
-                                <u style={{color: "blue"}}>delete</u>
-                            </div>
-
-                            <div onClick={this.itemCollapseBack.bind(this)}>
-                                <u style={{color: "blue"}}>close</u>
-                            </div>
-                        </div>
-                        ) : (
-                            ''
-                        )
-                    }
+                    <u>Delete</u>
                 </div>
             </div>
         )
 
         return( 
             <div>
-                {itemsArrayToMap}
+                {mappedItems}
             </div>
         )
     }
