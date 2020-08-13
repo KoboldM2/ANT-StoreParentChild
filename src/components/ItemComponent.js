@@ -9,57 +9,56 @@ export class ItemComponent extends Component {
         this.state = {
             acceptedFile: null,
             acceptedName: '',
-            acceptedQuantity: 0,
-            acceptedPrice: 0,
-            itemsStateHolder: []
-        }
-
-        this.testFunction = this.testFunction.bind(this)
+            itemsStateHolder: [],
+			tempArrayHolder: [],
+			testArray: this.props.items
+		}
         this.deleteItem = this.deleteItem.bind(this)
         this.arrayStateHandler = this.arrayStateHandler.bind(this)
         this.updateQuantityHandler = this.updateQuantityHandler.bind(this)
         this.updatePriceHandler = this.updatePriceHandler.bind(this)
-    }
+	}
 
-    arrayStateHandler = (item) => {
-        var tempVar = item
+    arrayStateHandler = (item, acceptedItemArray) => {
+		const arrayHolder = acceptedItemArray
+        const tempVar = item
+        this.props.dataHandler(arrayHolder)
         this.setState({
-            itemsStateHolder: tempVar
-        })
-        //console.log(acceptedItemArray[index])
+            itemsStateHolder: tempVar,
+            tempArrayHolder: arrayHolder
+		})
+		return acceptedItemArray = this.state.tempArrayHolder
     }
 
+//#region - Qty/Price Handler
     updateQuantityHandler = (event, item) => {
-        parseInt(event.target.value)
-        parseInt(item.itemQty)
         item.itemQty = event.target.value
+        parseInt(item.itemQty)
     }
 
     updatePriceHandler = (event, item) => {
-        parseInt(event.target.value)
-        parseInt(item.itemPrice)
         item.itemPrice = event.target.value
+        parseInt(item.itemPrice)
     }
 
-    deleteItem = (acceptedItemArray,index) => {
-        acceptedItemArray.splice(index)
-        console.log(acceptedItemArray)
-    }
 
-    testFunction = item => {
-        /* console.log("this is passed qty: " + item.itemQty)
-        item.itemQty = item.itemQty + 1000
-        console.log("this is the new qty: " + item.itemQty) 
-        this works!!! itemqty does change
-        */
+//#endregion
+
+    deleteItem = (index, acceptedItemArray) => {
+		const selectedDeleteItem = acceptedItemArray[index]
+		const deleteItem = acceptedItemArray.filter(item => {
+			return item !== selectedDeleteItem
+		})
+		console.log(deleteItem)
+		this.arrayStateHandler()
     }
 
     render() {
-        var acceptedItemArray = this.props.items
+		const acceptedItemArray = this.props.items
         const mappedItems = acceptedItemArray.map((item, index) =>
             <div key = {index} 
             className = "individualItem" 
-            onChange={() => this.arrayStateHandler(item)}
+            onChange={() => this.arrayStateHandler(item, acceptedItemArray)}
             >
                 <div className = "subItemElements">
                     <img src = {item.itemFile} alt="alt" height="100px" width="100px"/>
@@ -71,7 +70,6 @@ export class ItemComponent extends Component {
 
                 <div className = "subItemElements">
                     Quantity:
-                    {/* {item.itemQty} */}
                     <InputComponent
                         name = 'itemQty'
                         inputType = 'number'
@@ -93,7 +91,7 @@ export class ItemComponent extends Component {
                 </div>
 
                 <div className = "subItemElements" 
-                onClick = {() => this.deleteItem(acceptedItemArray,index)}
+                onClick = {() => this.deleteItem(index, acceptedItemArray)}
                 >
                     <u>Delete</u>
                 </div>

@@ -15,12 +15,15 @@ export class Appcopy extends Component {
                 itemName: '',
                 itemQty: 0,
                 itemPrice: 0
-            }
+            },
+            totalQty: 0,
+            totalPrice: 0
         }
         this.decrementQuantity = this.decrementQuantity.bind(this)
         this.incrementQuantity = this.incrementQuantity.bind(this)
         this.quantityInputHandler = this.quantityInputHandler.bind(this)
         this.addItemFunction = this.addItemFunction.bind(this)
+        this.itemsFromChildHandler = this.itemsFromChildHandler.bind(this)
     }
 
 //#region - Quantity Input Handlers & Functions 
@@ -61,6 +64,12 @@ export class Appcopy extends Component {
 
 //#endregion
 
+    itemsFromChildHandler = (itemArray) => {
+        this.setState({
+            addedItem: itemArray
+        })
+    }
+
 //#region - Add Item Value Handlers
     //Quantity Add Item Handler is in quantityInputHandler
     fileHandler = event => {
@@ -87,10 +96,22 @@ export class Appcopy extends Component {
             addedItem: this.state.addedItem.concat(allInputs)
         })
     }
-
 //#endregion
 
     render() {
+        var tempStateAddedItem = this.state.addedItem
+        var totalPriceQtyHandlers = tempStateAddedItem.map((item) =>
+            <div key = {item.itemName}>
+                <div className = "totalSubDiv">
+                    Total Qty: {item.itemQty}
+                </div>
+
+                <div className = "totalSubDiv">
+                    Total Price: {item.itemPrice}
+                </div>
+            </div>
+        )
+
         return(
             <div className = "mainDiv">
                 <div className = "addItemDiv">
@@ -136,19 +157,12 @@ export class Appcopy extends Component {
                 <div>
                     <ItemComponent
                         items = {this.state.addedItem}
+                        dataHandler = {this.itemsFromChildHandler}
                     />       
                 </div>
 
-                <div className = "totalCountersDiv">
-
-                    <div className = "totalSubDiv">
-                        total qty: lorem
-                    </div>
-                
-                    <div className = "totalSubDiv">
-                        total price: ipsum
-                    </div>
-
+                <div>
+                    {totalPriceQtyHandlers}
                 </div>
             </div>
         )
