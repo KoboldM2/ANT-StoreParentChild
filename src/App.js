@@ -4,137 +4,178 @@ import './App.css';
 import InputComponent from './components/InputComponent'
 import ItemComponent from './components/ItemComponent'
 
-export class App extends Component {        
+export class App extends Component {
     constructor(props) {
-		super(props)
-        this.state = {
-			itemIsActive: false,
-			items: [],
-			userInput: {
-				itemFile: null,
-				itemName: '',
-				itemQty: 0,
-				itemPrice: 0
-			},
-			totalQty: 0,
-			totalPrice: 0,
-		}		
-		this.childQuantityHandler = this.childQuantityHandler.bind(this)
-		this.childPriceHandler = this.childPriceHandler.bind(this)
-	}
+        super(props)
+        this.state = { 
+            addedItem: [],
+            baseQuantity: 1,
+            userInput: {
+                itemFile: null,
+                itemName: '',
+                itemQty: 0,
+                itemPrice: 0
+            },
+            totalQty: 0,
+            totalPrice: 0
+        }
+        this.decrementQuantity = this.decrementQuantity.bind(this)
+        this.incrementQuantity = this.incrementQuantity.bind(this)
+        this.quantityInputHandler = this.quantityInputHandler.bind(this)
+        this.addItemFunction = this.addItemFunction.bind(this)
+        this.itemsFromChildHandler = this.itemsFromChildHandler.bind(this)
+    }
 
-//#region - Order Handlers
-	fileHandler = event => {
-		var userInput = {...this.state.userInput}
-		userInput.itemFile = URL.createObjectURL(event.target.files[0])
-		this.setState({userInput})
-	}
+//#region - Quantity Input Handlers & Functions 
 
-	nameHandler = event => {
-		var userInput = {...this.state.userInput}
-		userInput.itemName = event.target.value
-		this.setState({userInput})
-	}
+    decrementQuantity = () => {
+        this.setState(prevState => {
+            if(prevState.baseQuantity > 1) {
+              return {
+                baseQuantity: prevState.baseQuantity - 1
+              }
+            } else {
+              return null;
+            }
+          });
+    }
 
-	quantityHandler = event => {
-		var userInput = {...this.state.userInput}
-		userInput.itemQty = parseInt(event.target.value)
-		this.setState({userInput})
-	}
+    incrementQuantity = () => {
+        this.setState(prevState => {
+            if(prevState.baseQuantity < 99) {
+              return {
+                baseQuantity: prevState.baseQuantity + 1
+              }
+            } else {
+              return null;
+            }
+          });
+    }
 
-	priceHandler = event => {
-		var userInput = {...this.state.userInput}
-		userInput.itemPrice = parseInt(event.target.value)
-		this.setState({userInput})
-	}
+    quantityInputHandler = (event, name) => {
+        parseInt(event.target.value)
+        var userInput = {...this.state.userInput}
+        userInput.itemQty = event.target.value
+        this.setState({
+            [name]: event.target.value,
+            userInput
+        });
+    }
+
 //#endregion
 
-//#region - Child Handlers
-	childQuantityHandler() {
-		
-	}
+    itemsFromChildHandler = (itemArray) => {
+        this.setState({
+            addedItem: itemArray
+        })
+    }
 
-	childPriceHandler() {
+//#region - Add Item Value Handlers
+    //Quantity Add Item Handler is in quantityInputHandler
+    fileHandler = event => {
+        var userInput = {...this.state.userInput}
+        userInput.itemFile = URL.createObjectURL(event.target.files[0])
+        this.setState({userInput})
+    }
 
-	}
+    nameHandler = event => {
+        var userInput = {...this.state.userInput}
+        userInput.itemName = event.target.value
+        this.setState({userInput})
+    }
 
+    priceHandler = event => {
+        var userInput = {...this.state.userInput}
+        userInput.itemPrice = parseInt(event.target.value)
+        this.setState({userInput})
+    }
+
+    addItemFunction = () => {
+        var allInputs = this.state.userInput
+        this.setState({
+            addedItem: this.state.addedItem.concat(allInputs)
+        })
+    }
 //#endregion
 
-	submitOrder() {
-		const userInputObject = this.state.userInput
-		this.setState({
-			items: this.state.items.concat(userInputObject)
-		})
-	}
+    countTotalQty() {
+/*         this.setState(state => {
+            return {
+                totalQty: state.addedItem.reduce((acc, item) => {
+                    return parseInt(acc) + parseInt(item.itemQty)
+                }, 0)
+            }
+        }) */
+
+/*         this.setState({
+            totalQty: this.state.addedItem.reduce((total, {itemQty}) => parseInt(total) + parseInt(itemQty), 0)
+        }) */
+    }
 
     render() {
-        return( 
-            <div>
+        var countTotalQty = this.state.addedItem.reduce((total, {itemQty}) => parseInt(total) + parseInt(itemQty), 0)
+        var countTotalPrice = this.state.addedItem.reduce((total, {itemPrice}) => parseInt(total) + parseInt(itemPrice), 0)
+
+        return(
+            <div className = "mainDiv">
+                <div className = "addItemDiv">
+                    <InputComponent
+                        name = 'imageUpload'
+                        inputType = 'file'
+                        placeholder = 'Upload Image'
+                        accept = 'image/*'
+                        onChange = {this.fileHandler.bind(this)}
+                    />
+
+                    <InputComponent
+                        name = 'itemName'
+                        inputType = 'text'
+                        placeholder = 'Item Name'
+                        onChange = {this.nameHandler.bind(this)}
+                    />
+
+                    <div className = "subAddItemDiv">
+                        <button onClick={this.decrementQuantity}>-</button>
+                        <InputComponent
+                            name = 'itemQty'
+                            inputType = 'number'
+                            placeholder = 'Qty'
+                            onChange = {(event) => this.quantityInputHandler(event, 'baseQuantity')}
+                            value = {this.state.baseQuantity}
+                        />
+                        <button onClick={this.incrementQuantity}>+</button>
+                    </div>
+
+                    <InputComponent
+                        name = 'itemPrice'
+                        inputType = 'number'
+                        placeholder = 'Item Price'
+                        onChange = {this.priceHandler.bind(this)}
+                    />
+
+                    <button
+                    onClick = {this.addItemFunction}
+                    >Add Item</button>
+                </div>
+
                 <div>
-					<form type ="post">
-					{/* Order Bar */}
-						<InputComponent
-							name = 'imageUpload'
-							inputType = 'file'
-							placeholder = 'Upload Image'
-							accept = 'image/*'
-							onChange = {this.fileHandler.bind(this)}
-						/>
+                    <ItemComponent
+                        items = {this.state.addedItem}
+                        dataHandler = {this.itemsFromChildHandler}
+                    />       
+                </div>
 
-						<InputComponent
-							name = 'orderName'
-							inputType = 'text'
-							placeholder = 'Name'
-							inputSize = "15"
-							onChange = {this.nameHandler.bind(this)}
-						/>
-
-						<InputComponent
-							name = 'orderQty'
-							inputType = 'number'
-							placeholder = 'Qty'
-							inputMin = '1'
-							inputMax = '99'
-							onChange = {this.quantityHandler.bind(this)}
-						/>
-
-						<InputComponent
-							name = 'orderPrice'
-							inputType = 'number'
-							placeholder = 'Price'
-							inputMin = '0'
-							inputMax = '999999'
-							onChange = {this.priceHandler.bind(this)}
-						/>
-
-						<button
-							type = "button"
-							onClick = {this.submitOrder.bind(this)}
-						>
-						Enter
-						</button>
-					</form>
-				</div>
-				
-					<ItemComponent
-						items = {this.state.items}
-						itemIsActive = {this.state.itemIsActive}
-						qtyChildHandler = {this.childQuantityHandler.bind(this)}
-						priceChildHandler = {this.childPriceHandler.bind(this)}
-					/>
-				
-				<br/>
-
-				<div>
-					<div>
-						Total Quantity: {this.state.totalQty}
-					</div>
-
-					<div>
-						Total Price: {this.state.totalPrice}
-					</div>
-				</div>
-
+                <div>
+                    <div className = "totalSubDiv">
+                        <div className="totalSubSubDiv">
+                            Total Qty: {countTotalQty}
+                        </div>
+                        
+                        <div className="totalSubSubDiv">
+                            Total Price: {countTotalPrice}
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }

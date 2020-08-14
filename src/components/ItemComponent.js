@@ -10,9 +10,9 @@ export class ItemComponent extends Component {
             acceptedFile: null,
             acceptedName: '',
             itemsStateHolder: [],
-			tempArrayHolder: [],
-			testArray: this.props.items
-		}
+			tempArrayHolder: []
+			//testArray: this.props.items //doesn't work??
+        }
         this.deleteItem = this.deleteItem.bind(this)
         this.arrayStateHandler = this.arrayStateHandler.bind(this)
         this.updateQuantityHandler = this.updateQuantityHandler.bind(this)
@@ -48,13 +48,12 @@ export class ItemComponent extends Component {
 		const selectedDeleteItem = acceptedItemArray[index]
 		const deleteItem = acceptedItemArray.filter(item => {
 			return item !== selectedDeleteItem
-		})
-		console.log(deleteItem)
-		this.arrayStateHandler()
+        })
+        this.arrayStateHandler(selectedDeleteItem,deleteItem)
     }
 
     render() {
-		const acceptedItemArray = this.props.items
+        const acceptedItemArray = this.props.items
         const mappedItems = acceptedItemArray.map((item, index) =>
             <div key = {index} 
             className = "individualItem" 
